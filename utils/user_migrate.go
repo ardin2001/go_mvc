@@ -1,16 +1,17 @@
-package user_migrate
+package utils
 
 import (
-	config_db "echo_golang/config"
-	user_models "echo_golang/models"
+	"echo_golang/config"
+	"echo_golang/models"
 	"fmt"
 )
 
 func UserMigrate() {
-	DB, err := config_db.InitDB()
+	DB, err := config.InitDB()
 	if err != nil {
 		fmt.Println("Failed connect to database : ", err.Error())
 		return
 	}
-	DB.AutoMigrate(&user_models.User{})
+	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.Book{})
 }

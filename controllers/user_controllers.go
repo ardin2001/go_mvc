@@ -1,8 +1,8 @@
-package user_controllers
+package controllers
 
 import (
-	config_db "echo_golang/config"
-	user_models "echo_golang/models"
+	"echo_golang/config"
+	"echo_golang/models"
 	"fmt"
 	"net/http"
 
@@ -10,9 +10,9 @@ import (
 )
 
 func GetUserController(c echo.Context) error {
-	var users []user_models.User
+	var users []models.User
 
-	DB, _ := config_db.InitDB()
+	DB, _ := config.InitDB()
 	check := DB.Find(&users).Error
 
 	if check != nil {
@@ -28,9 +28,9 @@ func GetUserController(c echo.Context) error {
 }
 
 func CreateUserController(c echo.Context) error {
-	user := user_models.User{}
+	user := models.User{}
 	c.Bind(&user)
-	DB, _ := config_db.InitDB()
+	DB, _ := config.InitDB()
 	check := DB.Save(&user).Error
 
 	if check != nil {
@@ -46,11 +46,11 @@ func CreateUserController(c echo.Context) error {
 }
 
 func DeleteUserController(c echo.Context) error {
+	fmt.Println("punten delete data")
 	id := c.Param("id")
-	DB, _ := config_db.InitDB()
+	DB, _ := config.InitDB()
 
-	check := DB.Delete(&user_models.User{}, &id).Error
-	fmt.Println(check)
+	check := DB.Delete(&models.User{}, &id).Error
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": check.Error(),
@@ -65,8 +65,8 @@ func DeleteUserController(c echo.Context) error {
 
 func UpdateUserController(c echo.Context) error {
 	id := c.Param("id")
-	DB, _ := config_db.InitDB()
-	user := user_models.User{}
+	DB, _ := config.InitDB()
+	user := models.User{}
 
 	DB.First(&user, id)
 	// new_id, _ := strconv.Atoi(id)
