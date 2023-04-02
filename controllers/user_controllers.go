@@ -30,7 +30,6 @@ func GetUserController(c echo.Context) error {
 func CreateUserController(c echo.Context) error {
 	user := user_models.User{}
 	c.Bind(&user)
-
 	DB, _ := config_db.InitDB()
 	check := DB.Save(&user).Error
 
@@ -70,6 +69,8 @@ func UpdateUserController(c echo.Context) error {
 	user := user_models.User{}
 
 	DB.First(&user, id)
+	// new_id, _ := strconv.Atoi(id)
+	// user.ID = new_id
 	err := c.Bind(&user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
