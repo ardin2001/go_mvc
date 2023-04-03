@@ -7,7 +7,6 @@ import (
 
 func main() {
 	utils.UserMigrate()
-
 	e := route.Routers()
 	e.Logger.Fatal(e.Start(":8000"))
 }

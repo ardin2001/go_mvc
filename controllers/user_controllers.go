@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"echo_golang/config"
+	"echo_golang/middleware"
 	"echo_golang/models"
 	"fmt"
 	"net/http"
@@ -84,4 +85,25 @@ func UpdateUserController(c echo.Context) error {
 		"data":    user,
 	})
 
+}
+
+func LoginUserController(c echo.Context) error {
+	user := models.User{}
+	c.Bind(&user)
+	DB, _ := config.InitDB()
+	err := DB.Where("name = ? AND password = ?", user.Name, user.Password).First(&user).Error
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "login failed username or password",
+			"error":   err.Error(),
+		})
+	}
+
+	token, _ := middleware.CreateToken(user.ID, user.Name)
+	userresponse := models.UserResponse{ID: user.ID, Name: user.Name, Email: user.Email, Token: token}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "login success",
+		"users":   userresponse,
+	})
 }
