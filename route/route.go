@@ -17,6 +17,7 @@ func Routers() *echo.Echo {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	e.GET("/login", controllers.LoginUser)
 	e.GET("/users", controllers.GetUserController)
 	e.POST("/users", controllers.CreateUserController, mid.BasicAuth(middleware.BasicAuthDB))
 	e.DELETE("/users/:id", controllers.DeleteUserController, middleware.TestJWT)

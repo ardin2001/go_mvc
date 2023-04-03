@@ -3,7 +3,6 @@ package controllers
 import (
 	"echo_golang/config"
 	"echo_golang/models"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -46,7 +45,6 @@ func CreateUserController(c echo.Context) error {
 }
 
 func DeleteUserController(c echo.Context) error {
-	fmt.Println("punten delete data")
 	id := c.Param("id")
 	DB, _ := config.InitDB()
 
