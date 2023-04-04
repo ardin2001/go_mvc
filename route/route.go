@@ -8,8 +8,8 @@ import (
 	m "echo_golang/middleware"
 
 	"github.com/joho/godotenv"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	mid "github.com/labstack/echo/v4/middleware"
 )
 
 func Routers() *echo.Echo {
@@ -21,11 +21,11 @@ func Routers() *echo.Echo {
 		return c.String(http.StatusOK, "Please, login here !, localhost:8000/login")
 	})
 	e.POST("/login", controllers.LoginUserController)
-	e.GET("/users", controllers.GetUserController, mid.JWT([]byte(dbHost)))
-	e.GET("users/auth", controllers.GetUserController, mid.JWT([]byte(dbHost)))
-	e.POST("/users", controllers.CreateUserController, mid.JWT([]byte(dbHost)))
-	e.DELETE("/users/:id", controllers.DeleteUserController, mid.JWT([]byte(dbHost)))
-	e.PUT("/users/:id", controllers.UpdateUserController, mid.JWT([]byte(dbHost)))
+	e.GET("/users", controllers.GetUserController, echojwt.JWT([]byte(dbHost)))
+	e.GET("users/auth", controllers.GetUserController, echojwt.JWT([]byte(dbHost)))
+	e.POST("/users", controllers.CreateUserController, echojwt.JWT([]byte(dbHost)))
+	e.DELETE("/users/:id", controllers.DeleteUserController, echojwt.JWT([]byte(dbHost)))
+	e.PUT("/users/:id", controllers.UpdateUserController, echojwt.JWT([]byte(dbHost)))
 
 	return e
 }
