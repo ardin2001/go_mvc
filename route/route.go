@@ -20,6 +20,7 @@ func Routers() *echo.Echo {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Please, login here !, localhost:8000/login")
 	})
+
 	e.POST("/login", controllers.LoginUserController)
 	e.GET("/users", controllers.GetUserController, echojwt.JWT([]byte(dbHost)))
 	e.GET("users/auth", controllers.GetUserController, echojwt.JWT([]byte(dbHost)))

@@ -5,7 +5,6 @@ import (
 	"echo_golang/middleware"
 	"echo_golang/models"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -34,10 +33,8 @@ func GetUserController(c echo.Context) error {
 func CreateUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
-	log.Println(user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
 	DB, _ := config.InitDB()
 	check := DB.Save(&user).Error
-	log.Println(user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
 
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
