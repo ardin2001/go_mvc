@@ -12,7 +12,7 @@ import (
 
 func GetUserController(c echo.Context) error {
 	var users []models.User
-
+	claim, _ := middleware.GetClaims(c)
 	DB, _ := config.InitDB()
 	fmt.Println(DB)
 	check := DB.Find(&users).Error
@@ -26,6 +26,7 @@ func GetUserController(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success",
 		"data":    users,
+		"auth-db": claim,
 	})
 
 }
@@ -49,10 +50,10 @@ func CreateUserController(c echo.Context) error {
 }
 
 func DeleteUserController(c echo.Context) error {
-	fmt.Println("punten delete data")
 	id := c.Param("id")
 	DB, _ := config.InitDB()
 
+	data, _ := middleware.Restricted(c)
 	check := DB.Delete(&models.User{}, &id).Error
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -60,8 +61,9 @@ func DeleteUserController(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success",
-		"data":    "data id " + id + " berhasil dihapus",
+		"message":   "success",
+		"data":      "data id " + id + " berhasil dihapus",
+		"data-auth": data,
 	})
 
 }
