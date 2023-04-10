@@ -29,12 +29,13 @@ func Routers() *echo.Echo {
 		return c.String(http.StatusOK, "Please, login here !, localhost:8000/login")
 	})
 
-	e.POST("/login", controllers.LoginUserController)
-	e.GET("/users", controllers.GetUserController, echojwt.WithConfig(config))
-	e.GET("users/auth", controllers.GetUserController, echojwt.WithConfig(config))
-	e.POST("/users", controllers.CreateUserController, echojwt.WithConfig(config))
-	e.DELETE("/users/:id", controllers.DeleteUserController, echojwt.WithConfig(config))
-	e.PUT("/users/:id", controllers.UpdateUserController, echojwt.WithConfig(config))
+	c := controllers.UserStruct{}
+	e.POST("/login", c.LoginUserController)
+	e.GET("/users", c.GetUserController, echojwt.WithConfig(config))
+	e.GET("users/auth", c.GetUserController, echojwt.WithConfig(config))
+	e.POST("/users", c.CreateUserController, echojwt.WithConfig(config))
+	e.DELETE("/users/:id", c.DeleteUserController, echojwt.WithConfig(config))
+	e.PUT("/users/:id", c.UpdateUserController, echojwt.WithConfig(config))
 
 	return e
 }

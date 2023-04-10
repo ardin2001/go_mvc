@@ -10,7 +10,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUserController(c echo.Context) error {
+type UserInterface interface {
+	LoginUserController(c echo.Context) error
+	GetUserController(c echo.Context) error
+	CreateUserController(c echo.Context) error
+	DeleteUserController(c echo.Context) error
+	UpdateUserController(c echo.Context) error
+}
+
+type UserStruct struct {
+}
+
+func (us *UserStruct) GetUserController(c echo.Context) error {
 	var users []models.User
 	claim, _ := middleware.GetClaims(c)
 	DB, _ := config.InitDB()
@@ -31,7 +42,7 @@ func GetUserController(c echo.Context) error {
 
 }
 
-func CreateUserController(c echo.Context) error {
+func (us *UserStruct) CreateUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 	DB, _ := config.InitDB()
@@ -49,7 +60,7 @@ func CreateUserController(c echo.Context) error {
 
 }
 
-func DeleteUserController(c echo.Context) error {
+func (us *UserStruct) DeleteUserController(c echo.Context) error {
 	id := c.Param("id")
 	DB, _ := config.InitDB()
 
@@ -68,14 +79,12 @@ func DeleteUserController(c echo.Context) error {
 
 }
 
-func UpdateUserController(c echo.Context) error {
+func (us *UserStruct) UpdateUserController(c echo.Context) error {
 	id := c.Param("id")
 	DB, _ := config.InitDB()
 	user := models.User{}
 
 	DB.First(&user, id)
-	// new_id, _ := strconv.Atoi(id)
-	// user.ID = new_id
 	err := c.Bind(&user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -91,7 +100,7 @@ func UpdateUserController(c echo.Context) error {
 
 }
 
-func LoginUserController(c echo.Context) error {
+func (us *UserStruct) LoginUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 	DB, _ := config.InitDB()
