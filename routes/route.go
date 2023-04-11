@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"echo_golang/controllers"
-	m "echo_golang/middleware"
+	m "echo_golang/middlewares"
 	"echo_golang/models"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -31,8 +31,9 @@ func Routers() *echo.Echo {
 
 	c := controllers.UserStruct{}
 	e.POST("/login", c.LoginUserController)
-	e.GET("/users", c.GetUserController, echojwt.WithConfig(config))
-	e.GET("users/auth", c.GetUserController, echojwt.WithConfig(config))
+	e.GET("/users/:id", c.GetUserController, echojwt.WithConfig(config))
+	e.GET("/users", c.GetUsersController, echojwt.WithConfig(config))
+	e.GET("users/auth", c.GetUsersController, echojwt.WithConfig(config))
 	e.POST("/users", c.CreateUserController, echojwt.WithConfig(config))
 	e.DELETE("/users/:id", c.DeleteUserController, echojwt.WithConfig(config))
 	e.PUT("/users/:id", c.UpdateUserController, echojwt.WithConfig(config))

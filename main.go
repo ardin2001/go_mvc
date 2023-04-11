@@ -1,7 +1,7 @@
 package main
 
 import (
-	"echo_golang/route"
+	route "echo_golang/routes"
 	"echo_golang/utils"
 )
 

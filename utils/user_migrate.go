@@ -1,13 +1,13 @@
 package utils
 
 import (
-	"echo_golang/config"
+	"echo_golang/configs"
 	"echo_golang/models"
 	"fmt"
 )
 
 func UserMigrate() {
-	DB, err := config.InitDB()
+	DB, err := configs.InitDB()
 	if err != nil {
 		fmt.Println("Failed connect to database : ", err.Error())
 		return
