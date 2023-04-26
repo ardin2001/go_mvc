@@ -4,13 +4,13 @@ import (
 	"echo_golang/configs"
 	middleware "echo_golang/middlewares"
 	"echo_golang/models"
-	"echo_golang/repositories"
+	"echo_golang/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-type UserInterface interface {
+type UserIntController interface {
 	LoginUserController(c echo.Context) error
 	GetUsersController(c echo.Context) error
 	GetUserController(c echo.Context) error
@@ -19,14 +19,18 @@ type UserInterface interface {
 	UpdateUserController(c echo.Context) error
 }
 
-type UserStruct struct {
-	UserR repositories.UserStruct
+type UserStrController struct {
+	userR services.UserIntService
 }
 
-func (us *UserStruct) GetUserController(c echo.Context) error {
+func NewUserController(uc services.UserIntService) UserIntController {
+	return &UserStrController{
+		userR: uc,
+	}
+}
+func (us *UserStrController) GetUserController(c echo.Context) error {
 	id := c.Param("id")
-	user, check := us.UserR.GetUserRepository(id)
-
+	user, check := us.userR.GetUserService(id)
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": check.Error(),
@@ -39,9 +43,8 @@ func (us *UserStruct) GetUserController(c echo.Context) error {
 	})
 }
 
-func (us *UserStruct) GetUsersController(c echo.Context) error {
-	users, check := us.UserR.GetUsersRepository()
-
+func (us *UserStrController) GetUsersController(c echo.Context) error {
+	users, check := us.userR.GetUsersService()
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": check.Error(),
@@ -54,11 +57,11 @@ func (us *UserStruct) GetUsersController(c echo.Context) error {
 
 }
 
-func (us *UserStruct) CreateUserController(c echo.Context) error {
+func (us *UserStrController) CreateUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 
-	_, check := us.UserR.CreateRepository(&user)
+	_, check := us.userR.CreateService(&user)
 
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -72,10 +75,10 @@ func (us *UserStruct) CreateUserController(c echo.Context) error {
 
 }
 
-func (us *UserStruct) DeleteUserController(c echo.Context) error {
+func (us *UserStrController) DeleteUserController(c echo.Context) error {
 	id := c.Param("id")
 
-	check := us.UserR.DeleteRepository(id)
+	check := us.userR.DeleteService(id)
 
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -89,12 +92,12 @@ func (us *UserStruct) DeleteUserController(c echo.Context) error {
 
 }
 
-func (us *UserStruct) UpdateUserController(c echo.Context) error {
+func (us *UserStrController) UpdateUserController(c echo.Context) error {
 	id := c.Param("id")
 	user := models.User{}
 	c.Bind(&user)
 
-	dataUser, check := us.UserR.UpdateRepository(&user, id)
+	dataUser, check := us.userR.UpdateService(&user, id)
 
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -108,7 +111,7 @@ func (us *UserStruct) UpdateUserController(c echo.Context) error {
 	})
 }
 
-func (us *UserStruct) LoginUserController(c echo.Context) error {
+func (us *UserStrController) LoginUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 	DB, _ := configs.InitDB()

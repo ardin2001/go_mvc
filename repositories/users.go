@@ -3,20 +3,29 @@ package repositories
 import (
 	"echo_golang/configs"
 	"echo_golang/models"
+
+	"gorm.io/gorm"
 )
 
 type UserRepositories interface {
-	GetUsersRepository() ([]*models.User, error)
+	GetUsersRepository() ([]models.User, error)
 	GetUserRepository(id string) (*models.User, error)
-	CreateRepository(User models.User) (*models.User, error)
-	UpdateRepository(id string, UserBody models.User) (*models.User, error)
+	CreateRepository(User *models.User) (*models.User, error)
 	DeleteRepository(id string) error
+	UpdateRepository(userId *models.User, id string) (*models.User, error)
 }
 
-type UserStruct struct {
+type UserRepository struct {
+	DB *gorm.DB
 }
 
-func (us *UserStruct) GetUsersRepository() ([]models.User, error) {
+func NewRepository(db *gorm.DB) UserRepositories {
+	return &UserRepository{
+		DB: db,
+	}
+}
+
+func (us *UserRepository) GetUsersRepository() ([]models.User, error) {
 	var users []models.User
 	DB, _ := configs.InitDB()
 	check := DB.Find(&users).Error
@@ -28,7 +37,7 @@ func (us *UserStruct) GetUsersRepository() ([]models.User, error) {
 	return users, check
 }
 
-func (us *UserStruct) GetUserRepository(id string) (*models.User, error) {
+func (us *UserRepository) GetUserRepository(id string) (*models.User, error) {
 	var user models.User
 
 	DB, _ := configs.InitDB()
@@ -39,14 +48,14 @@ func (us *UserStruct) GetUserRepository(id string) (*models.User, error) {
 	return &user, check
 }
 
-func (us *UserStruct) DeleteRepository(id string) error {
+func (us *UserRepository) DeleteRepository(id string) error {
 	DB, _ := configs.InitDB()
 	check := DB.Delete(&models.User{}, &id).Error
 
 	return check
 }
 
-func (us *UserStruct) CreateRepository(user *models.User) (*models.User, error) {
+func (us *UserRepository) CreateRepository(user *models.User) (*models.User, error) {
 	DB, _ := configs.InitDB()
 	check := DB.Save(user).Error
 	if check != nil {
@@ -55,7 +64,7 @@ func (us *UserStruct) CreateRepository(user *models.User) (*models.User, error) 
 	return user, check
 }
 
-func (us *UserStruct) UpdateRepository(userId *models.User, id string) (*models.User, error) {
+func (us *UserRepository) UpdateRepository(userId *models.User, id string) (*models.User, error) {
 	DB, _ := configs.InitDB()
 	var user models.User
 
