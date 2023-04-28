@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUserController(c echo.Context) error {
+func GetUsersController(c echo.Context) error {
 	var users []models.User
 	claim, _ := middleware.GetClaims(c)
 	DB, _ := config.InitDB()
@@ -23,6 +23,25 @@ func GetUserController(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success",
 		"data":    users,
+		"auth-db": claim,
+	})
+
+}
+
+func GetUserController(c echo.Context) error {
+	var user models.User
+	claim, _ := middleware.Restricted(c)
+	DB, _ := config.InitDB()
+	check := DB.First(&user, claim.ID).Error
+
+	if check != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": check.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "success",
+		"data":    user,
 		"auth-db": claim,
 	})
 
@@ -102,7 +121,7 @@ func LoginUserController(c echo.Context) error {
 	}
 
 	token, _ := middleware.CreateToken(user.ID, user.Name, user.Role)
-	userresponse := models.UserResponse{ID: user.ID, Name: user.Name, Email: user.Email, Token: token}
+	userresponse := models.UserResponse{ID: user.ID, Name: user.Name, Email: user.Email, Role: user.Role, Token: token}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "login success",
 		"users":   userresponse,

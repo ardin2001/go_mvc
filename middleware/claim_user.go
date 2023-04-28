@@ -24,7 +24,7 @@ func GetClaims(c echo.Context) (*models.JwtCustomClaims, error) {
 	return claims, nil
 }
 
-func Restricted(c echo.Context) (interface{}, error) {
+func Restricted(c echo.Context) (*models.JwtCustomClaims, error) {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*models.JwtCustomClaims)
 	name := claims

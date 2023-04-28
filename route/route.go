@@ -19,6 +19,7 @@ func Routers() *echo.Echo {
 	m.Logger(e)
 	godotenv.Load()
 	dbHost := os.Getenv("SECRET_KEY")
+
 	config := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(models.JwtCustomClaims)
@@ -30,7 +31,8 @@ func Routers() *echo.Echo {
 	})
 
 	e.POST("/login", controllers.LoginUserController)
-	e.GET("/users", controllers.GetUserController, echojwt.WithConfig(config))
+	e.GET("/users", controllers.GetUsersController, echojwt.WithConfig(config))
+	e.GET("/user", controllers.GetUserController, echojwt.WithConfig(config))
 	e.GET("users/auth", controllers.GetUserController, echojwt.WithConfig(config))
 	e.POST("/users", controllers.CreateUserController, echojwt.WithConfig(config))
 	e.DELETE("/users/:id", controllers.DeleteUserController, echojwt.WithConfig(config))
