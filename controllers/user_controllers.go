@@ -4,7 +4,6 @@ import (
 	"echo_golang/config"
 	"echo_golang/middleware"
 	"echo_golang/models"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,9 +13,7 @@ func GetUserController(c echo.Context) error {
 	var users []models.User
 	claim, _ := middleware.GetClaims(c)
 	DB, _ := config.InitDB()
-	fmt.Println(DB)
 	check := DB.Find(&users).Error
-	fmt.Println(check)
 
 	if check != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -104,7 +101,7 @@ func LoginUserController(c echo.Context) error {
 		})
 	}
 
-	token, _ := middleware.CreateToken(user.ID, user.Name)
+	token, _ := middleware.CreateToken(user.ID, user.Name, user.Role)
 	userresponse := models.UserResponse{ID: user.ID, Name: user.Name, Email: user.Email, Token: token}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "login success",

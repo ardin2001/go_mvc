@@ -5,5 +5,6 @@ import "github.com/golang-jwt/jwt/v4"
 type JwtCustomClaims struct {
 	ID   uint   `json:"userId" form:"userId"`
 	Name string `json:"name" form:"name"`
+	Role string `json:"role" form:"role"`
 	jwt.RegisteredClaims
 }

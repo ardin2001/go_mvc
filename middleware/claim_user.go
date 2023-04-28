@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"echo_golang/models"
-	"fmt"
 	"os"
 	"strings"
 
@@ -25,11 +24,9 @@ func GetClaims(c echo.Context) (*models.JwtCustomClaims, error) {
 	return claims, nil
 }
 
-func Restricted(c echo.Context) (string, error) {
-	defer fmt.Println("end user")
+func Restricted(c echo.Context) (interface{}, error) {
 	user := c.Get("user").(*jwt.Token)
-	fmt.Println("failed user")
 	claims := user.Claims.(*models.JwtCustomClaims)
-	name := claims.Name
+	name := claims
 	return name, nil
 }
